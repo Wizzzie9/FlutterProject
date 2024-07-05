@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "253030228111",
+    "firebase_url": "https://distance-check-app-tst-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "distance-check-app-tst",
+    "storage_bucket": "distance-check-app-tst.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:253030228111:android:39cd275f72ede10afe50fa",
+        "android_client_info": {
+          "package_name": "com.example.distance_check_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA66igHQZodk1B-qg2-5bgPSkVKUILqEfw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
