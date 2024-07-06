@@ -20,6 +20,7 @@ dependencies:
   baseflow_plugin_template: ^2.1.2
   google_maps_flutter: ^2.7.0
   geocoding: ^3.0.0
+  firebase_auth: ^5.1.1
 
 dev_dependencies:
   flutter_test:

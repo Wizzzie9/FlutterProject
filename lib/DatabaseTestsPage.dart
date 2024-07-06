@@ -1,5 +1,5 @@
-import 'package:distance_check_app/BarcodeScannerTab.dart';
-import 'package:distance_check_app/DistanceCheckTab.dart';
+import 'package:distance_check_app/BarcodeScannerPage.dart';
+import 'package:distance_check_app/DistanceCheckPage.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';

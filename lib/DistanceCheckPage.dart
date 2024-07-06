@@ -1,11 +1,12 @@
 import 'package:distance_check_app/test.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart';
 
-import 'BarcodeScannerTab.dart';
+import 'BarcodeScannerPage.dart';
 
 class DistanceCheck extends StatefulWidget {
   const DistanceCheck({Key? key}) : super(key: key);
@@ -21,8 +22,7 @@ class _DistanceCheck extends State<DistanceCheck> {
   late LatLng _center;
   String _address = '';
   final Set<Marker> _markers = {};
-
-  //String? _lokalizacja;
+  final DatabaseReference ref = FirebaseDatabase.instance.ref('Lokalizacje');
   late GoogleMapController mapController;
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
@@ -46,13 +46,10 @@ class _DistanceCheck extends State<DistanceCheck> {
     }
     Position position = await GetPosition().determinePosition();
     setState(() {
-      //_lokalizacja = '${position.latitude} ${position.longitude}';
       latitude = position.latitude;
       longitude = position.longitude;
       _center = LatLng(latitude, longitude);
     });
-    print("LOKJALIZACJA $_center");
-    print("LATITUDE: $latitude");
 
       List<Placemark> placemarks = await placemarkFromCoordinates(
           latitude,
@@ -83,7 +80,22 @@ class _DistanceCheck extends State<DistanceCheck> {
               )
           )
         );
+        sendData();
       });
+  }
+
+  void sendData() {
+    if (latitude != null) {
+      ref.child('keyDatabaseName').push().set({'latitude': latitude, 'longitude': longitude}).then((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Wysłano lokalizację')),
+        );
+      }).catchError((error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Nie udało się wysłać lokalizacji: $error')),
+        );
+      });
+    }
   }
 
 
