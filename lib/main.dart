@@ -1,3 +1,4 @@
+import 'package:distance_check_app/BarcodeScannerTab.dart';
 import 'package:distance_check_app/DatabaseTestsTab.dart';
 import 'package:distance_check_app/firebase_api.dart';
 import 'package:distance_check_app/firebase_options.dart';
@@ -43,29 +44,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-String? _lokalizacja;
-
-@override
-void initState() {
-  super.initState();
-  GetLoc();
-}
-
-Future<void> GetLoc() async {
-  LocationPermission permission;
-  print(permission = await Geolocator.checkPermission());
-  if (permission == LocationPermission.denied) {
-    permission = await Geolocator.requestPermission();
-    if (permission == LocationPermission.denied) {
-      return Future.error('Location permissions are denied');
-    }
-  }
-  Position position = await GetPosition().determinePosition();
-  setState(() {
-    _lokalizacja = 'Lat: ${position.latitude}, Lon: ${position.longitude}';
-  });
-}
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -97,13 +75,10 @@ Future<void> GetLoc() async {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) =>  DataBaseTests()),
+                MaterialPageRoute(builder: (context) =>  Barcodescanner()),
               );
             },
             child: Card(child: _SampleCard(cardName: 'Barcode Scanner')),
-          ),
-          GestureDetector(
-            child: Card(child: _SampleCard(cardName: _lokalizacja ?? 'Loading...')),
           ),
         ],
       ),

@@ -3,6 +3,10 @@
         android:label="DistanceCheck"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+
+        <meta-data android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDtE4b1XV-zYx19JOmVOgBo2Bdj7AryfKo"/>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

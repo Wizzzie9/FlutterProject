@@ -12,7 +12,6 @@ class GetPosition {
     LocationPermission permission;
     Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     print(position);
-    print("dupa");
 
     // Test if location services are enabled.
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
