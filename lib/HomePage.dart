@@ -8,7 +8,7 @@ import 'DistanceCheckPage.dart';
 
 
 class HomePage extends StatelessWidget {
-  HomePage({Key? key}) : super(key:key);
+  HomePage({super.key});
   final User? user = Auth().currentUser;
 
   Future<void> signOut() async {
@@ -16,17 +16,17 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _title() {
-    return const Text('Firebase Auth');
+    return const Text('Menu główne');
   }
 
   Widget _userUid() {
-    return Text(user?.email ?? 'User email');
+    return Text(user?.email ?? 'Adres email');
   }
 
   Widget _signOutButton() {
     return ElevatedButton(
         onPressed: signOut,
-        child: const Text('Sign Out'),
+        child: const Text('Wyloguj się'),
     );
   }
 
@@ -44,28 +44,28 @@ class HomePage extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) =>  DataBaseTests()),
+                MaterialPageRoute(builder: (context) =>  const DataBaseTests()),
               );
             },
-            child: Card(child: _SampleCard(cardName: 'Database tests')),
+            child: const Card(child: _SampleCard(cardName: 'Odczyt/zapis do bazy danych')),
           ),
           GestureDetector(
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) =>  DistanceCheck()),
+                MaterialPageRoute(builder: (context) =>  const DistanceCheck()),
               );
             },
-            child: Card(child: _SampleCard(cardName: 'Distance Check')),
+            child: const Card(child: _SampleCard(cardName: 'Lokalizacja na mapie')),
           ),
           GestureDetector(
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) =>  Barcodescanner()),
+                MaterialPageRoute(builder: (context) =>  const Barcodescanner()),
               );
             },
-            child: Card(child: _SampleCard(cardName: 'Barcode Scanner')),
+            child: const Card(child: _SampleCard(cardName: 'Skaner kodów')),
           ),
           _userUid(),
           _signOutButton()

@@ -4,8 +4,9 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 
+
 class DataBaseTests extends StatefulWidget {
-  const DataBaseTests({Key? key}) : super(key: key);
+  const DataBaseTests({super.key});
 
   @override
   _DataBaseTestsState createState() => _DataBaseTestsState();
@@ -46,12 +47,12 @@ class _DataBaseTestsState extends State<DataBaseTests> {
         case 1:
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => DistanceCheck()),
+            MaterialPageRoute(builder: (context) => const DistanceCheck()),
           );
         case 2:
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => Barcodescanner()),
+            MaterialPageRoute(builder: (context) => const Barcodescanner()),
           );
       }
     });
@@ -61,7 +62,7 @@ class _DataBaseTestsState extends State<DataBaseTests> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Second Route'),
+        title: const Text('Odczy/zapis do bazy danych'),
       ),
       body: Column(
         children: [
@@ -77,8 +78,8 @@ class _DataBaseTestsState extends State<DataBaseTests> {
           ),
           OutlinedButton(
             style: ButtonStyle(
-              foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-              backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
+              foregroundColor: WidgetStateProperty.all<Color>(Colors.white),
+              backgroundColor: WidgetStateProperty.all<Color>(Colors.green),
             ),
             onPressed: sendData,
             child: const Text('Wyślij'),
@@ -102,15 +103,15 @@ class _DataBaseTestsState extends State<DataBaseTests> {
         items: const [
           BottomNavigationBarItem(
               icon: Icon(Icons.home),
-              label: "Datebase"
+              label: "Baza danych"
           ),
           BottomNavigationBarItem(
               icon: Icon(Icons.home),
-              label: "DistanceCheck"
+              label: "Lokalizacja"
           ),
           BottomNavigationBarItem(
               icon: Icon(Icons.home),
-              label: "BarcodeScanner"
+              label: "Skaner kodów"
           ),
         ],
         currentIndex: _selectedIndex,

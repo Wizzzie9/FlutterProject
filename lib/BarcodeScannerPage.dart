@@ -1,8 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Barcodescanner extends StatefulWidget {
-  const Barcodescanner({Key? key}) : super(key: key);
+  const Barcodescanner({super.key});
 
   @override
   _Barcodescanner createState() => _Barcodescanner();
@@ -13,7 +12,7 @@ class _Barcodescanner extends State<Barcodescanner> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Barcodescanner"),
+        title: const Text("Skaner kodów"),
       ),
     );
   }

@@ -21,6 +21,7 @@ dependencies:
   google_maps_flutter: ^2.7.0
   geocoding: ^3.0.0
   firebase_auth: ^5.1.1
+  flutter_map_math: ^0.1.7
 
 dev_dependencies:
   flutter_test:
