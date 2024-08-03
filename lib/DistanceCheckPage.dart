@@ -29,9 +29,12 @@ class _DistanceCheck extends State<DistanceCheck> {
   bool isLoading = true;
   bool isLoading2 = true;
   final User? user = Auth().currentUser;
-  double nearestLatitude = 0;
+  double myLatitude = 0;
+  double myLongitude = 0;
   double nearestLongitude = 0;
   double distanceBetweenUsers = 0;
+  final List<Map<String, String>> latestEntries = [];
+
 
   void getData()async{ //use a Async-await function to get the data
     DataSnapshot data =  await FirebaseDatabase.instance.ref("Lokalizacje").get(); //get the data
@@ -64,6 +67,8 @@ class _DistanceCheck extends State<DistanceCheck> {
     setState(() {
       latitude = position.latitude;
       longitude = position.longitude;
+      myLatitude = latitude;
+      myLongitude = longitude;
       _center = LatLng(latitude, longitude);
     });
 
@@ -114,34 +119,55 @@ class _DistanceCheck extends State<DistanceCheck> {
 
   void readData() async {
     final ref = FirebaseDatabase.instance.ref();
-    final snapshot = await ref.child('/Lokalizacje/bJ9AYTG8ZodYTx3cYTgGj4IqLdM2').get();
-
+    final snapshot = await ref.child('/Lokalizacje/').get();
+    final flutterMapMath = FlutterMapMath();
     if (snapshot.exists) {
       final data = snapshot.value as Map<dynamic, dynamic>;
       data.forEach((key, value) {
-        final latitude = value['latitude'];
-        final longitude = value['longitude'];
-        nearestLatitude = latitude;
-        nearestLongitude = longitude;
+        if (key != '${user?.uid}') {
+          String latestSubKey;
+          dynamic latestEntry;
+          value.forEach((subKey, subValue) {
+            latestSubKey = subKey;
+            latestEntry = subValue;
+          });
+
+          if (latestEntry != null) {
+            final latitude = latestEntry['latitude'];
+            final longitude = latestEntry['longitude'];
+
+            double distance = flutterMapMath.distanceBetween(
+                latitude,
+                longitude,
+                myLatitude,
+                myLongitude,
+                "kilometers"
+            );
+            String roundedDistance = distance.toStringAsFixed(2);
+
+            // Dodaj najnowszy wpis do mapy latestEntries
+            latestEntries.add({
+              'uid': key,
+              'latitude': latitude.toString(),
+              'longitude': longitude.toString(),
+              'distance': roundedDistance
+            });
+          }
+        }
       });
+
+      latestEntries.forEach((entry) {
+        print('UID: ${entry['uid']}, Latitude: ${entry['latitude']}, Longitude: ${entry['longitude']}, Distance: ${entry['distance']}');
+      });
+
     } else {
       print('No data available.');
     }
-    final flutterMapMath = FlutterMapMath();
-    double distance = flutterMapMath.distanceBetween(
-        latitude,
-        longitude,
-        nearestLatitude,
-        nearestLongitude,
-        "kilometers"
-    );
+
     setState(() {
       isLoading2 = false;
-      distanceBetweenUsers = double.parse(distance.toStringAsFixed(2));
     });
   }
-
-
 
   void _onItemTapped(int index) {
     setState(() {
@@ -170,66 +196,71 @@ class _DistanceCheck extends State<DistanceCheck> {
       ),
       body: Column(
         children: [
-          Row(
-            children: [
-              SizedBox(
-                width: MediaQuery.of(context).size.width,
-               height: MediaQuery.of(context).size.height * 0.65,
-               // constraints: BoxConstraints(maxWidth: 300),
-                child: isLoading ? const Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CircularProgressIndicator(),
-                    Text("Ładowanie mapy..."),
-                  ],
-                ) : GoogleMap(
-                    onMapCreated: _onMapCreated ,
-                    initialCameraPosition: CameraPosition(
-                    target: _center,
-                    zoom: 17.0,
-                     ),
-                    markers: _markers,
-                    ),
-              )
-            ],
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start, // Wyrównuje wszystkie elementy do lewej
-            children: [
-              const Row(
-                children: [
-                  Text("Najbliżsi użytkownicy"),
-                ],
-              ),
-              const SizedBox(height: 8), // Odstęp między tekstem a informacją o ładowaniu
-              isLoading2
-                  ? const Row(
+          SizedBox(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height * 0.65,
+            child: isLoading
+                ? const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   CircularProgressIndicator(),
-                  SizedBox(width: 8), // Odstęp między wskaźnikiem a tekstem
-                  Text("wczytywanie danych"),
+                  SizedBox(height: 8),
+                  Text("Ładowanie mapy..."),
                 ],
-              )
-                  : Text("$nearestLatitude | $nearestLongitude = $distanceBetweenUsers  km"),
-            ],
+              ),
+            )
+                : GoogleMap(
+              onMapCreated: _onMapCreated,
+              initialCameraPosition: CameraPosition(
+                target: _center,
+                zoom: 17.0,
+              ),
+              markers: _markers,
+            ),
+          ),
+          const SizedBox(height: 8), // Odstęp przed listą
+          isLoading2
+              ? const Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(width: 8),
+                Text("Wczytywanie danych"),
+              ],
+            ),
           )
+              : Flexible(
+            child: ListView.builder(
+              itemCount: latestEntries.length,
+              itemBuilder: (context, index) {
+                final entry = latestEntries[index];
+                final latitude = entry['latitude'];
+                final longitude = entry['longitude'];
+                final distance = entry['distance'];
 
-
+                return ListTile(
+                  subtitle: Text('Latitude: $latitude, Longitude: $longitude, = $distance'),
+                );
+              },
+            ),
+          ),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
-            label: "Database"
+            label: "Database",
           ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: "DistanceCheck"
+            icon: Icon(Icons.home),
+            label: "DistanceCheck",
           ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: "BarcodeScanner"
+            icon: Icon(Icons.home),
+            label: "BarcodeScanner",
           ),
         ],
         currentIndex: _selectedIndex,
