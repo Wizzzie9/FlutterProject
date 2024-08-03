@@ -36,7 +36,6 @@ class _DistanceCheck extends State<DistanceCheck> {
   void getData()async{ //use a Async-await function to get the data
     DataSnapshot data =  await FirebaseDatabase.instance.ref("Lokalizacje").get(); //get the data
     final dane = data.value as Map<String, dynamic>;
-    List<Map<String, double>> wspolrzedne = [];
     print("Pobrane dane z bazy: $dane");
   }
 
