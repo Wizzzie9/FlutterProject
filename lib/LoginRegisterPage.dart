@@ -73,6 +73,21 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  // Widget _userName(
+  //     String title,
+  //     TextEditingController controller,
+  //     ) {
+  //   return TextField(
+  //     obscureText: true,
+  //     enableSuggestions: false,
+  //     autocorrect: false,
+  //     controller: controller,
+  //     decoration: InputDecoration(
+  //       labelText: title,
+  //     ),
+  //   );
+  // }
+
   Widget _errorMessage() {
     return Text(errorMessage == '' ? '' : '$errorMessage');
   }
@@ -81,7 +96,7 @@ class _LoginPageState extends State<LoginPage> {
     return ElevatedButton(
         onPressed:
           isLogin ? signInWithEmailAndPassword : createUserWithEmailAndPassword,
-        child: Text(isLogin ? 'Login' : 'Register'),
+        child: Text(isLogin ? 'Zaloguj się' : 'Załóż konto'),
     );
   }
 
@@ -93,7 +108,7 @@ class _LoginPageState extends State<LoginPage> {
             isLogin = !isLogin;
           });
         },
-        child: Text(isLogin ? 'Register instead' : 'Login instead'),
+        child: Text(isLogin ? 'Załóż konto' : 'Zaloguj się'),
     );
   }
 
@@ -112,8 +127,9 @@ class _LoginPageState extends State<LoginPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _emailEntryField('email', _controllerEmail),
-            _passwordEntryField('password', _controllerPassword),
+            _emailEntryField('Adres email', _controllerEmail),
+            _passwordEntryField('Hasło', _controllerPassword),
+           // _userName('Twoje imię', _controllerUserName),
             _errorMessage(),
             _submitButton(),
             _loginOrRegisterButton()

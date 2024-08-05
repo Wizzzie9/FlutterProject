@@ -1,4 +1,4 @@
-import 'package:distance_check_app/test.dart';
+import 'package:distance_check_app/GetCurrentPosition.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -198,7 +198,7 @@ class _DistanceCheck extends State<DistanceCheck> {
         children: [
           SizedBox(
             width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height * 0.65,
+            height: MediaQuery.of(context).size.height * 0.55,
             child: isLoading
                 ? const Center(
               child: Column(
@@ -239,10 +239,16 @@ class _DistanceCheck extends State<DistanceCheck> {
                 final latitude = entry['latitude'];
                 final longitude = entry['longitude'];
                 final distance = entry['distance'];
+                 return Column(
+                   children: [
+                     ListTile(
+                      subtitle: Text('Latitude: $latitude, Longitude: $longitude = $distance'),
+                     ),
+                     const Divider(),
+                   ],
+                 );
 
-                return ListTile(
-                  subtitle: Text('Latitude: $latitude, Longitude: $longitude, = $distance'),
-                );
+
               },
             ),
           ),
