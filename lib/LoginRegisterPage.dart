@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:distance_check_app/auth.dart';
+import '../UpdateUserProfile.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -35,10 +36,17 @@ class _LoginPageState extends State<LoginPage> {
           email: _controllerEmail.text,
           password: _controllerPassword.text
       );
+      if(mounted) {
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => UpdateUserProfile()));
+      }
+
     } on FirebaseAuthException catch (e) {
-      setState(() {
-        errorMessage = e.message;
-      });
+      if (mounted) {
+        setState(() {
+          errorMessage = e.message;
+        });
+      }
     }
   }
 
@@ -72,21 +80,6 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
-
-  // Widget _userName(
-  //     String title,
-  //     TextEditingController controller,
-  //     ) {
-  //   return TextField(
-  //     obscureText: true,
-  //     enableSuggestions: false,
-  //     autocorrect: false,
-  //     controller: controller,
-  //     decoration: InputDecoration(
-  //       labelText: title,
-  //     ),
-  //   );
-  // }
 
   Widget _errorMessage() {
     return Text(errorMessage == '' ? '' : '$errorMessage');
@@ -129,7 +122,6 @@ class _LoginPageState extends State<LoginPage> {
           children: [
             _emailEntryField('Adres email', _controllerEmail),
             _passwordEntryField('Hasło', _controllerPassword),
-           // _userName('Twoje imię', _controllerUserName),
             _errorMessage(),
             _submitButton(),
             _loginOrRegisterButton()
