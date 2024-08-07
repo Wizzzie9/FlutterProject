@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:distance_check_app/LoginRegisterPage.dart';
 import 'package:flutter/material.dart';
 import 'package:distance_check_app/auth.dart';
