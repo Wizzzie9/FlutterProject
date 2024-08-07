@@ -1,3 +1,4 @@
+import 'package:distance_check_app/HomePage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:distance_check_app/auth.dart';
@@ -23,6 +24,10 @@ class _LoginPageState extends State<LoginPage> {
           email: _controllerEmail.text,
           password: _controllerPassword.text
       );
+      if(mounted) {
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => HomePage()));
+      }
     } on FirebaseAuthException catch (e) {
       setState(() {
         errorMessage = e.message;
@@ -51,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _title() {
-    return const Text('Log In or Sign Up to proceed');
+    return const Text('Zaloguj się lub zarejestruj');
   }
 
   Widget _emailEntryField(

@@ -43,7 +43,6 @@ class Auth {
       DocumentReference userDocRef = FirebaseFirestore.instance.collection('users').doc(currentUser?.uid);
       DocumentSnapshot userDocSnapshot = await userDocRef.get();
       if (userDocSnapshot.exists) {
-        print(userDocSnapshot['profileCompleted']);
         return userDocSnapshot['profileCompleted'];
        // return userDocSnapshot.data() as Map<String, dynamic>?;
       } else {
@@ -52,6 +51,23 @@ class Auth {
       }
     } catch (e) {
       print("Błąd podczas pobierania dokumentu: $e");
+      return null;
+    }
+  }
+
+  Future<String?> getUserName() async {
+    try {
+      // Pobierz dokument użytkownika
+      DocumentSnapshot userDoc = await _firestore.collection('users').doc(currentUser?.uid).get();
+      if (userDoc.exists) {
+        // Wyciągnij wartość pola 'imie'
+        final data = userDoc.data() as Map<String, dynamic>;
+        return data['imie'] as String?;
+      } else {
+        return " ";
+      }
+    } catch (e) {
+      print('Błąd podczas pobierania dokumentu: $e');
       return null;
     }
   }

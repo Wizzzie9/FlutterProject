@@ -242,7 +242,7 @@ class _DistanceCheck extends State<DistanceCheck> {
                  return Column(
                    children: [
                      ListTile(
-                      subtitle: Text('Latitude: $latitude, Longitude: $longitude = $distance'),
+                      subtitle: Text('Latitude: $latitude, Longitude: $longitude = $distance km'),
                      ),
                      const Divider(),
                    ],

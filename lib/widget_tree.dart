@@ -22,10 +22,10 @@ class _WidgetTreeState extends State<WidgetTree> {
     return StreamBuilder(
       stream: auth.authStateChanges,
       builder: (context, snapshot) {
+        print("Wracam");
         if (!snapshot.hasData) {
           return const LoginPage(); // lub inny widget dla przypadku braku danych
         }
-
         // Jeżeli mamy dane w snapshot, to musimy poczekać na getUserData
         return FutureBuilder<bool?>(
           future: auth.getUserData(),
@@ -33,44 +33,25 @@ class _WidgetTreeState extends State<WidgetTree> {
             if (futureSnapshot.connectionState == ConnectionState.waiting) {
               return CircularProgressIndicator(); // lub inny wskaźnik ładowania
             }
-
             if (futureSnapshot.hasError) {
               return Text('Error: ${futureSnapshot.error}');
             }
-
             if (futureSnapshot.hasData) {
               bool? userData = futureSnapshot.data;
               if (userData == false) {
                 return UpdateUserProfile();
               } else if (userData == true) {
                 return HomePage();
-              } else {
-                return const LoginPage();
+              }
+              else {
+                return HomePage();
               }
             } else {
-              return const LoginPage(); // lub inny widget w przypadku braku danych
+              return const LoginPage();
             }
           },
         );
       },
     );
-
-    // @override
-    // Widget build(BuildContext context) {
-    //   return StreamBuilder(
-    //       stream: Auth().authStateChanges,
-    //     builder: (context, snapshot) {
-    //       print("auth.getUserData(): ${auth.getUserData()}");
-    //         if(snapshot.hasData && auth.getUserData() == false) {
-    //           return (UpdateUserProfile());
-    //         } else if (snapshot.hasData && auth.getUserData() == true) {
-    //           return (HomePage());
-    //         }
-    //         else {
-    //           return const LoginPage();
-    //         }
-    //     },
-    //   );
-    // }
   }
 }

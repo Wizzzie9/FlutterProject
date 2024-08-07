@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:distance_check_app/LoginRegisterPage.dart';
 import 'package:flutter/material.dart';
 import 'package:distance_check_app/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -5,14 +7,27 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'BarcodeScannerPage.dart';
 import 'DatabaseTestsPage.dart';
 import 'DistanceCheckPage.dart';
-
+import 'UpdateUserProfile.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
   final User? user = Auth().currentUser;
 
-  Future<void> signOut() async {
-    await Auth().signOut();
+  Widget _signOutButton(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () async {
+        try {
+          await auth.signOut();
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const LoginPage()),
+          );
+        } catch (e) {
+          print('Error signing out: $e');
+        }
+      },
+      child: const Text('Sign Out'),
+    );
   }
 
   Widget _title() {
@@ -23,53 +38,59 @@ class HomePage extends StatelessWidget {
     return Text(user?.email ?? 'Adres email');
   }
 
-  Widget _signOutButton() {
-    return ElevatedButton(
-        onPressed: signOut,
-        child: const Text('Wyloguj się'),
-    );
-  }
-
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: _title(),
+        //title: _title(),
       ),
-      body:Column(
-        children: <Widget>[
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) =>  const DataBaseTests()),
-              );
-            },
-            child: const Card(child: _SampleCard(cardName: 'Odczyt/zapis do bazy danych')),
-          ),
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) =>  const DistanceCheck()),
-              );
-            },
-            child: const Card(child: _SampleCard(cardName: 'Lokalizacja na mapie')),
-          ),
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) =>  const Barcodescanner()),
-              );
-            },
-            child: const Card(child: _SampleCard(cardName: 'Skaner kodów')),
-          ),
-          _userUid(),
-          _signOutButton()
-        ],
+      body:FutureBuilder(
+        future: auth.getUserName(),
+        builder: (BuildContext context, AsyncSnapshot<String?> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return CircularProgressIndicator(); // Loading
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else if (snapshot.hasData) {
+            return Column(
+              children: <Widget>[
+                Text("Witaj, ${snapshot.data}!"),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) =>  const DataBaseTests()),
+                    );
+                  },
+                  child: const Card(child: _SampleCard(cardName: 'Odczyt/zapis do bazy danych')),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) =>  const DistanceCheck()),
+                    );
+                  },
+                  child: const Card(child: _SampleCard(cardName: 'Lokalizacja na mapie')),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) =>  const Barcodescanner()),
+                    );
+                  },
+                  child: const Card(child: _SampleCard(cardName: 'Skaner kodów')),
+                ),
+                _userUid(),
+                _signOutButton(context)
+              ],
+            );
+          } else {
+            return Text('No data');
+          }
+        },
       ),
     );
   }
