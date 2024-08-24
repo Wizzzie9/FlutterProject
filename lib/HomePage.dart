@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:distance_check_app/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'BarcodeScannerPage.dart';
 import 'DatabaseTestsPage.dart';
 import 'DistanceCheckPage.dart';
 import 'UpdateUserProfile.dart';
@@ -62,7 +61,7 @@ class HomePage extends StatelessWidget {
                       MaterialPageRoute(builder: (context) =>  const DataBaseTests()),
                     );
                   },
-                  child: const Card(child: _SampleCard(cardName: 'Odczyt/zapis do bazy danych')),
+                  child: const Card(child: _SampleCard(cardName: 'Odczyt/zapis do Firestore')),
                 ),
                 GestureDetector(
                   onTap: () {
@@ -73,15 +72,15 @@ class HomePage extends StatelessWidget {
                   },
                   child: const Card(child: _SampleCard(cardName: 'Lokalizacja na mapie')),
                 ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) =>  const Barcodescanner()),
-                    );
-                  },
-                  child: const Card(child: _SampleCard(cardName: 'Skaner kodów')),
-                ),
+                // GestureDetector(
+                //   onTap: () {
+                //     Navigator.push(
+                //       context,
+                //       MaterialPageRoute(builder: (context) =>  const Barcodescanner()),
+                //     );
+                //   },
+                //   child: const Card(child: _SampleCard(cardName: 'Skaner kodów')),
+                // ),
                 _userUid(),
                 _signOutButton(context)
               ],

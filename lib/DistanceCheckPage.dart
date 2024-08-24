@@ -36,7 +36,7 @@ class _DistanceCheck extends State<DistanceCheck> {
   final List<Map<String, String>> latestEntries = [];
 
 
-  void getData()async{ //use a Async-await function to get the data
+  void getData()async{
     DataSnapshot data =  await FirebaseDatabase.instance.ref("Lokalizacje").get(); //get the data
     final dane = data.value as Map<String, dynamic>;
     print("Pobrane dane z bazy: $dane");
@@ -60,7 +60,7 @@ class _DistanceCheck extends State<DistanceCheck> {
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        return Future.error('Location permissions are denied');
+        return Future.error('Odmówiono uprawnień do lokalizacji');
       }
     }
     Position position = await GetPosition().determinePosition();
@@ -161,7 +161,7 @@ class _DistanceCheck extends State<DistanceCheck> {
       });
 
     } else {
-      print('No data available.');
+      print('Brak danych');
     }
 
     setState(() {
@@ -247,8 +247,6 @@ class _DistanceCheck extends State<DistanceCheck> {
                      const Divider(),
                    ],
                  );
-
-
               },
             ),
           ),
