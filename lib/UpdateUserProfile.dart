@@ -59,6 +59,8 @@ Future<void> updateUserData(String name, int age) async {
     });
     await currentUser?.updateProfile(displayName: name);
     await currentUser?.reload();
+    print("Wysłano mail weryfikacyjny");
+    await currentUser?.sendEmailVerification();
   }
 }
 

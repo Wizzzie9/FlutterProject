@@ -1,3 +1,4 @@
+import 'package:distance_check_app/ForgotPasswordPage.dart';
 import 'package:distance_check_app/HomePage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -98,6 +99,16 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  Widget _forgotPassword() {
+    return TextButton(
+      onPressed: () {
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => PasswordReminderPage()));
+      },
+      child: Text('Nie pamiętam hasła'),
+    );
+  }
+
 
   Widget _loginOrRegisterButton() {
     return TextButton(
@@ -127,6 +138,7 @@ class _LoginPageState extends State<LoginPage> {
           children: [
             _emailEntryField('Adres email', _controllerEmail),
             _passwordEntryField('Hasło', _controllerPassword),
+            _forgotPassword(),
             _errorMessage(),
             _submitButton(),
             _loginOrRegisterButton()
