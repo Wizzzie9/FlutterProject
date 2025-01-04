@@ -24,12 +24,12 @@ Widget _title() {
   return const Text('Uzupełnij swój profil, aby kontynuować');
 }
 
-Widget _card(TextEditingController controller, String title) {
+Widget _card(TextEditingController controller, String name) {
   return Card(
     child: TextField(
       controller: controller,
       decoration: InputDecoration(
-        labelText: title
+        labelText: name
       ),
     ),
   );
@@ -57,6 +57,8 @@ Future<void> updateUserData(String name, int age) async {
       'imie': name,
       'wiek': age
     });
+    await currentUser?.updateProfile(displayName: name);
+    await currentUser?.reload();
   }
 }
 

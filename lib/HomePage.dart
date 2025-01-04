@@ -32,9 +32,12 @@ class HomePage extends StatelessWidget {
     return const Text('Menu główne');
   }
 
+
+
   Widget _userUid() {
     return Text(user?.email ?? 'Adres email');
   }
+
 
 
   @override
@@ -51,6 +54,7 @@ class HomePage extends StatelessWidget {
           } else if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
           } else if (snapshot.hasData) {
+            String? _userName = snapshot.data;
             return Column(
               children: <Widget>[
                 Text("Witaj, ${snapshot.data}!"),
@@ -67,7 +71,9 @@ class HomePage extends StatelessWidget {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) =>  const DistanceCheck()),
+                      MaterialPageRoute(builder: (context) =>  const DistanceCheck(), settings: RouteSettings(
+                        arguments: _userName,
+                      )),
                     );
                   },
                   child: const Card(child: _SampleCard(cardName: 'Lokalizacja na mapie')),
@@ -97,7 +103,6 @@ class HomePage extends StatelessWidget {
 class _SampleCard extends StatelessWidget {
   const _SampleCard({required this.cardName});
   final String cardName;
-
   @override
   Widget build(BuildContext context) {
     return SizedBox(

@@ -13,8 +13,10 @@ import 'package:flutter_map_math/flutter_geo_math.dart';
 class DistanceCheck extends StatefulWidget {
   const DistanceCheck({super.key});
 
+
   @override
   _DistanceCheck createState() => _DistanceCheck();
+
 }
 
 class _DistanceCheck extends State<DistanceCheck> {
@@ -36,11 +38,18 @@ class _DistanceCheck extends State<DistanceCheck> {
   final List<Map<String, String>> latestEntries = [];
 
 
-  void getData()async{
-    DataSnapshot data =  await FirebaseDatabase.instance.ref("Lokalizacje").get(); //get the data
-    final dane = data.value as Map<String, dynamic>;
-    print("Pobrane dane z bazy: $dane");
+
+  // void getData() async{
+  //   DataSnapshot data =  await FirebaseDatabase.instance.ref("Lokalizacje").get(); //get the data
+  //   final dane = data.value as Map<String, dynamic>;
+  //   print("Pobrane dane z bazy: $dane");
+  // }
+
+  void getData() async {
+    DataSnapshot data = await FirebaseDatabase.instance.ref("Lokalizacje").get(); // get the data
+    final dane = Map<String, dynamic>.from(data.value as Map<Object?, Object?>);  //konwersja
   }
+
 
 
   void _onMapCreated(GoogleMapController controller) {
@@ -106,7 +115,7 @@ class _DistanceCheck extends State<DistanceCheck> {
   }
 
   void sendData() {
-    ref.child('${user?.uid}').push().set({'latitude': latitude, 'longitude': longitude}).then((_) {
+    ref.child('${user?.uid}').push().set({'userName': user?.displayName,'latitude': latitude, 'longitude': longitude}).then((_) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Wysłano lokalizację')),
       );
@@ -133,6 +142,7 @@ class _DistanceCheck extends State<DistanceCheck> {
           });
 
           if (latestEntry != null) {
+            final userName = latestEntry['userName'];
             final latitude = latestEntry['latitude'];
             final longitude = latestEntry['longitude'];
 
@@ -147,6 +157,7 @@ class _DistanceCheck extends State<DistanceCheck> {
 
             // Dodaj najnowszy wpis do mapy latestEntries
             latestEntries.add({
+              'Name': userName.toString(),
               'uid': key,
               'latitude': latitude.toString(),
               'longitude': longitude.toString(),
@@ -156,9 +167,9 @@ class _DistanceCheck extends State<DistanceCheck> {
         }
       });
 
-      latestEntries.forEach((entry) {
-        print('UID: ${entry['uid']}, Latitude: ${entry['latitude']}, Longitude: ${entry['longitude']}, Distance: ${entry['distance']}');
-      });
+      // latestEntries.forEach((entry) {
+      //   print('name: ${entry['Name']},UID: ${entry['uid']}, Latitude: ${entry['latitude']}, Longitude: ${entry['longitude']}, Distance: ${entry['distance']}');
+      // });
 
     } else {
       print('Brak danych');
@@ -239,10 +250,11 @@ class _DistanceCheck extends State<DistanceCheck> {
                 final latitude = entry['latitude'];
                 final longitude = entry['longitude'];
                 final distance = entry['distance'];
+                final userName = entry['Name'];
                  return Column(
                    children: [
                      ListTile(
-                      subtitle: Text('Latitude: $latitude, Longitude: $longitude = $distance km'),
+                      subtitle: Text('Imię: $userName \nLatitude: $latitude\nLongitude: $longitude\nDystans: $distance km'),
                      ),
                      const Divider(),
                    ],
