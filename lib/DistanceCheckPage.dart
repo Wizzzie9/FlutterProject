@@ -47,13 +47,6 @@ class _DistanceCheck extends State<DistanceCheck> {
 
 
 
-  void getData() async {
-    DataSnapshot data = await FirebaseDatabase.instance.ref("Lokalizacje").get(); // get the data
-    final dane = Map<String, dynamic>.from(data.value as Map<Object?, Object?>);  //konwersja
-  }
-
-
-
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
   }
@@ -157,13 +150,7 @@ class _DistanceCheck extends State<DistanceCheck> {
       final data = snapshot.value as Map<dynamic, dynamic>;
       data.forEach((key, value) {
         if (key != '${user?.uid}') {
-          String latestSubKey;
-          dynamic latestEntry;
-          value.forEach((subKey, subValue) {
-            latestSubKey = subKey;
-            latestEntry = subValue;
-          });
-
+          dynamic latestEntry = value.values.last; // Pobierz ostatni element
           if (latestEntry != null) {
             final userName = latestEntry['userName'];
             final latitude = latestEntry['latitude'];
@@ -178,7 +165,6 @@ class _DistanceCheck extends State<DistanceCheck> {
             );
             String roundedDistance = distance.toStringAsFixed(2);
 
-            // Dodaj najnowszy wpis do mapy latestEntries
             latestEntries.add({
               'Name': userName.toString(),
               'uid': key,
@@ -189,8 +175,6 @@ class _DistanceCheck extends State<DistanceCheck> {
           }
         }
       });
-
-
     } else {
       print('Brak danych');
     }
@@ -220,7 +204,6 @@ class _DistanceCheck extends State<DistanceCheck> {
 
   @override
   Widget build(BuildContext context) {
-    getData();
     return Scaffold(
       appBar: AppBar(
         title: const Text("Lokalizacja na mapie"),
@@ -311,6 +294,7 @@ class _DistanceCheck extends State<DistanceCheck> {
                                    ),
                                  ),
                                );
+                               isLoading3 = true; // resetuje zmienna, zeby ponownie pobrac token. Jak nie zresetuje to po cofnieciu ekranu i przejsciu do innego czatu widac wiadomosci innej osoby
                              });
                            } else {
                              // If not loading, proceed to the next page immediately
