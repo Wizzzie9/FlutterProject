@@ -22,7 +22,6 @@ class _WidgetTreeState extends State<WidgetTree> {
     return StreamBuilder(
       stream: auth.authStateChanges,
       builder: (context, snapshot) {
-        print("Wracam");
         if (!snapshot.hasData) {
           return const LoginPage(); // lub inny widget dla przypadku braku danych
         }

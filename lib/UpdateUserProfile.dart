@@ -5,6 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:distance_check_app/auth.dart';
 import 'package:flutter/services.dart';
+import 'package:distance_check_app/firebase_api.dart';
+
 
 class UpdateUserProfile extends StatefulWidget {
   const UpdateUserProfile({super.key});
@@ -49,13 +51,18 @@ Widget _cardAge(TextEditingController controller, String age) {
 }
 
 Future<void> updateUserData(String name, int age) async {
+  FirebaseApi firebaseApi = FirebaseApi();
+  await firebaseApi.initNotifications();
+  String? token = firebaseApi.getToken();
+
   if (currentUser != null) {
     await _firestore.collection('users').doc(currentUser?.uid).set({
       'uid': currentUser?.uid,
       'email': currentUser?.email,
       'profileCompleted': true,
       'imie': name,
-      'wiek': age
+      'wiek': age,
+      'fcmToken': token
     });
     await currentUser?.updateProfile(displayName: name);
     await currentUser?.reload();

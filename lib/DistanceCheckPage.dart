@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:distance_check_app/GetCurrentPosition.dart';
+import 'package:distance_check_app/SendMessageToUser.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -30,12 +32,16 @@ class _DistanceCheck extends State<DistanceCheck> {
   late GoogleMapController mapController;
   bool isLoading = true;
   bool isLoading2 = true;
+  bool isLoading3 = true;
   final User? user = Auth().currentUser;
   double myLatitude = 0;
   double myLongitude = 0;
   double nearestLongitude = 0;
   double distanceBetweenUsers = 0;
   final List<Map<String, String>> latestEntries = [];
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  String? destinationFcmToken;
+  String? destinationEmail;
 
 
 
@@ -114,6 +120,25 @@ class _DistanceCheck extends State<DistanceCheck> {
       });
   }
 
+  Future<void> getUserData(String? uid) async {
+    try {
+      // Pobranie danych z kolekcji 'users'
+      QuerySnapshot snapshot = await _firestore.collection('users').get();
+
+      // Iterowanie po dokumentach i wypisanie pola 'imie'
+      for (var doc in snapshot.docs) {
+        if(doc['uid'] == uid){
+          print("Wszedlem do funkcji i czytam token ${doc['fcmToken']}");
+          destinationFcmToken = doc['fcmToken'];
+          destinationEmail = doc['email'];
+          isLoading3 = false;
+        }
+      }
+    } catch (e) {
+      print("Błąd pobierania danych: $e");
+    }
+  }
+
   void sendData() {
     ref.child('${user?.uid}').push().set({'userName': user?.displayName,'latitude': latitude, 'longitude': longitude}).then((_) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -167,9 +192,6 @@ class _DistanceCheck extends State<DistanceCheck> {
         }
       });
 
-      // latestEntries.forEach((entry) {
-      //   print('name: ${entry['Name']},UID: ${entry['uid']}, Latitude: ${entry['latitude']}, Longitude: ${entry['longitude']}, Distance: ${entry['distance']}');
-      // });
 
     } else {
       print('Brak danych');
@@ -251,10 +273,67 @@ class _DistanceCheck extends State<DistanceCheck> {
                 final longitude = entry['longitude'];
                 final distance = entry['distance'];
                 final userName = entry['Name'];
+                final uid = entry['uid'];
                  return Column(
                    children: [
                      ListTile(
-                      subtitle: Text('Imię: $userName \nLatitude: $latitude\nLongitude: $longitude\nDystans: $distance km'),
+                       trailing: IconButton(
+                         icon: Icon(Icons.message),
+                         color: Colors.orange,
+                         iconSize: 35,
+                         onPressed: () {
+                           if (isLoading3) {
+                             // Show loading message while waiting for data
+                             showDialog(
+                               context: context,
+                               barrierDismissible: false, // Prevent dismissing the dialog by tapping outside
+                               builder: (BuildContext context) {
+                                 return AlertDialog(
+                                   title: Text('Loading Chat...'),
+                                   content: CircularProgressIndicator(),
+                                 );
+                               },
+                             );
+                             // Simulate data loading by calling getUserData(uid)
+                             getUserData(uid).then((_) {
+                               // When data is loaded and isLoading3 is false, navigate to the next page
+                               Navigator.pop(context); // Close the loading dialog
+                               Navigator.push(
+                                 context,
+                                 MaterialPageRoute(
+                                   builder: (context) => const SendMessage(),
+                                   settings: RouteSettings(
+                                     arguments: {
+                                       'userName': userName,
+                                       'destinationFcmToken': destinationFcmToken,
+                                       'uid': uid,
+                                       'email': destinationEmail
+                                     },
+                                   ),
+                                 ),
+                               );
+                             });
+                           } else {
+                             // If not loading, proceed to the next page immediately
+                             Navigator.push(
+                               context,
+                               MaterialPageRoute(
+                                 builder: (context) => const SendMessage(),
+                                 settings: RouteSettings(
+                                   arguments: {
+                                     'userName': userName,
+                                     'destinationFcmToken': destinationFcmToken,
+                                     'uid': uid,
+                                     'email': destinationEmail
+                                   },
+                                 ),
+                               ),
+                             );
+                           }
+                         },
+
+                       ),
+                      subtitle: Text('Imię: $userName \nLatitude: $latitude\nLongitude: $longitude\nDystans: $distance km\nuid: $uid'),
                      ),
                      const Divider(),
                    ],
