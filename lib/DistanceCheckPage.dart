@@ -10,6 +10,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:distance_check_app/auth.dart';
 import 'BarcodeScannerPage.dart';
 import 'package:flutter_map_math/flutter_geo_math.dart';
+import 'package:distance_check_app/firebase_api.dart';
 
 
 class DistanceCheck extends StatefulWidget {
@@ -42,14 +43,9 @@ class _DistanceCheck extends State<DistanceCheck> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   String? destinationFcmToken;
   String? destinationEmail;
+  String? myFcmToken;
 
 
-
-  // void getData() async{
-  //   DataSnapshot data =  await FirebaseDatabase.instance.ref("Lokalizacje").get(); //get the data
-  //   final dane = data.value as Map<String, dynamic>;
-  //   print("Pobrane dane z bazy: $dane");
-  // }
 
   void getData() async {
     DataSnapshot data = await FirebaseDatabase.instance.ref("Lokalizacje").get(); // get the data
@@ -67,6 +63,7 @@ class _DistanceCheck extends State<DistanceCheck> {
   void initState() {
     super.initState();
     GetLoc();
+    FirebaseApi();
   }
 
   Future<void> GetLoc() async {
@@ -122,13 +119,13 @@ class _DistanceCheck extends State<DistanceCheck> {
 
   Future<void> getUserData(String? uid) async {
     try {
-      // Pobranie danych z kolekcji 'users'
+      // pobranie danych z kolekcji 'users'
       QuerySnapshot snapshot = await _firestore.collection('users').get();
-
-      // Iterowanie po dokumentach i wypisanie pola 'imie'
+      FirebaseApi firebaseApi = FirebaseApi();
+      await firebaseApi.initNotifications();
+      myFcmToken = firebaseApi.getToken();
       for (var doc in snapshot.docs) {
         if(doc['uid'] == uid){
-          print("Wszedlem do funkcji i czytam token ${doc['fcmToken']}");
           destinationFcmToken = doc['fcmToken'];
           destinationEmail = doc['email'];
           isLoading3 = false;
@@ -138,6 +135,7 @@ class _DistanceCheck extends State<DistanceCheck> {
       print("Błąd pobierania danych: $e");
     }
   }
+
 
   void sendData() {
     ref.child('${user?.uid}').push().set({'userName': user?.displayName,'latitude': latitude, 'longitude': longitude}).then((_) {
@@ -307,7 +305,8 @@ class _DistanceCheck extends State<DistanceCheck> {
                                        'userName': userName,
                                        'destinationFcmToken': destinationFcmToken,
                                        'uid': uid,
-                                       'email': destinationEmail
+                                       'email': destinationEmail,
+                                       'myFcmToken': myFcmToken
                                      },
                                    ),
                                  ),
@@ -324,7 +323,8 @@ class _DistanceCheck extends State<DistanceCheck> {
                                      'userName': userName,
                                      'destinationFcmToken': destinationFcmToken,
                                      'uid': uid,
-                                     'email': destinationEmail
+                                     'email': destinationEmail,
+                                     'myFcmToken': myFcmToken
                                    },
                                  ),
                                ),
